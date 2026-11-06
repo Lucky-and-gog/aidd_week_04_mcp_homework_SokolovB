@@ -1,0 +1,116 @@
+{
+  "name": "4.3_Support_Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "support-agent",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "837748dd-6a9b-441d-b975-dca8e785efd7",
+      "name": "Webhook",
+      "webhookId": "f6b47b42-e35e-425f-8488-412f17039d26"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Ответь на запрос пользователя: {{ $json.body.text }}",
+        "options": {
+          "systemMessage": "Ты — служба поддержки. Если пользователь пишет про баг, используй инструмент \"База знаний\". Если про оплату — инструмент \"Биллинг\".\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "081c67dc-a87a-4bd3-811f-09507fa71c12",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Поиск ответов на баги.",
+        "url": "https://api.example.com/knowledge-base",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.5,
+      "position": [
+        384,
+        208
+      ],
+      "id": "0f9e8129-8beb-494c-b07a-6319b1db666e",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Вопросы по оплате.",
+        "url": "ttps://api.example.com/billing",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.5,
+      "position": [
+        480,
+        304
+      ],
+      "id": "5f96fbc1-a9c2-4863-9259-5d108e3f8e4a",
+      "name": "Биллинг"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Биллинг": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "7d32bdb6-dfcf-4a16-aa6b-5e1bfca29e40",
+  "meta": {
+    "instanceId": "7362e716ca817e6100d5004e24f95259074ea1abd13e88498db861b44d10488c"
+  },
+  "nodeGroups": [],
+  "id": "opdTtMkwzdfAmtn4",
+  "tags": []
+}
